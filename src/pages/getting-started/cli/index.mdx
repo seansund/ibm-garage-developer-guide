@@ -21,6 +21,8 @@ These utilities include:
 
 You can either install the CLI onto your computer or install the Cloud Shell Commands environment.
 
+#### Note: If your environment is restricted, Please consider installing Cloud Shell Commands options.
+
 <Accordion>
 
 <AccordionItem title="Install the CLI">
@@ -29,6 +31,11 @@ You can either install the CLI onto your computer or install the Cloud Shell Com
 **Warning:** If you have installed the **IGC** CLI up to `v0.4.0` you must
  uninstall it and follow the installation steps below
 `npm rm -g @garage-catalyst/ibm-garage-cloud-cli`
+</InlineNotification>
+
+<InlineNotification kind="warning">
+**warning:** Specify toolkit if you want to install specific version
+'npm i -g @ibmgaragecloud/cloud-native-toolkit-cli@0.40'
 </InlineNotification>
 
 - Install the CLI:
@@ -153,15 +160,27 @@ Lists the `vlans` for a particular `resource group` and `region`. The command
 expects that an `ibmcloud login` has already been performed to set up the
 environment. This information is useful for preparing Terraform cluster creation steps
 
+```bash
+igc vlan
+```
+
 ### credentials
 
 Prints the urls and credentials for the tools deployed into the cluster.
 This includes Jenkins, Argo CD, and SonarQube, Pact, Artifactory.
 
+```bash
+igc credentials
+```
+
 ### ingress
 
 Lists the ingress urls for the provided namespace. If no namespace
 is provided, `dev` is used.
+
+```bash
+igc ingress
+```
 
 ### namespace
 
@@ -182,14 +201,30 @@ which a pipeline should be generated. You can supply a new namespace for your pi
 ```
 igc pipeline -n dev-team-a
 ```
-
+#### Note: Jenkins is the default if no value is provided.
 
 The pipeline command supports both `jenkins` and `tekton` pipelines using the flags `--jenkins` or `--tekton`,
-respectively.  Jenkins is the default if no value is provided.
+respectively.  
 
+<Accordion>
+
+<AccordionItem title="Jenkins">
+
+```bash
+igc pipeline -n dev-team-a --jenkins
 ```
+
+</AccordionItem>
+
+<AccordionItem title="Tekton">
+
+```bash
 igc pipeline -n dev-team-a --tekton
 ```
+</AccordionItem>
+
+</Accordion>
+
 
 ### tools
 
