@@ -3,16 +3,16 @@ node_js:
   - 12
 env:
   global:
-    - PATH_PREFIX="${TRAVIS_BRANCH}/"
+    - PATH_PREFIX="$TRAVIS_BRANCH/"
     - PAGES_FQDN="cloudnativetoolkit.dev"
 script: npm run build
-before_deploy: mkdir release && mv public release/${TRAVIS_BRANCH}
+before_deploy: mkdir release && mv public release/$TRAVIS_BRANCH
 deploy:
   - provider: pages
     skip_cleanup: true
     github_url: github.com
     github_token: $GITHUB_TOKEN
-    fqdn: ${PAGES_FQDN}
+    fqdn: $PAGES_FQDN
     keep_history: false
     local_dir: release/master
     on:
@@ -21,9 +21,10 @@ deploy:
     skip_cleanup: true
     github_url: github.com
     github_token: $GITHUB_TOKEN
-    fqdn: ${PAGES_FQDN}
+    fqdn: $PAGES_FQDN
     keep_history: true
     local_dir: release
     on:
+      all_branches: true
       condition: $TRAVIS_BRANCH != "master"
-after_deploy: echo "Staging site available at https://${PAGES_FQDN}/${TRAVIS_BRANCH}"
+after_deploy: echo "Staging site available at https://$PAGES_FQDN/$TRAVIS_BRANCH"
