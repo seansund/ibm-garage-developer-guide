@@ -546,3 +546,76 @@ as a deployment target:
     ```shell script
     argocd cluster list
     ```
+
+### Authentication to ArgoCD with AppId
+
+#### Register the application client in AppId
+
+1. Open the AppId console
+
+2. Click on `Applications` from the left menu
+
+3. Press the `Add application` button
+
+4. Provide a name for the application and the following values for scopes
+
+    - groups
+    - email
+    - profile
+
+5. Press `Save` to create the application client
+
+6. Select the created application from the table and expand the section to view the configuration values
+
+7. Make note of the `oAuthServerUrl`, `clientId`, and `secret`. They will be used later to configure ArgoCD
+
+#### Update the ArgoCD configuration
+
+1. Find the ArgoCD CR for the ArgoCD instance
+
+    ```shell script
+    kubectl get argocd -A
+    ```
+
+2. Edit the ArgoCD instance
+
+    ```shell script
+    kubectl edit argocd {argocd-name}
+    ```
+
+3. Update the ArgoCD instance configuration with the following dex config
+
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: ArgoCD
+    metadata:
+      name: argocd
+    spec:
+      dex:
+        config: |
+          connectors:
+            - id: appid
+              name: appid
+              type: oidc
+              config:
+                issuer: {ISSUER_URL}
+                clientID: {CLIENT_ID}
+                clientSecret: {CLIENT_SECRET}
+                redirectURI: {ARGOCD_BASE_URL}/api/dex/callback
+    ```
+
+    where:
+        - `{ISSUER_URL}` is the AppId `oAuthServerUrl` for the application client
+        - `{CLIENT_ID}` is the AppId `clientId` for the application client
+        - `{CLIENT_SECRET}` is the AppId `secret` for the application client
+        - `{ARGOCD_BASE_URL}` is the url from the ArgoCD route to the ArgoCD server
+
+#### Register the ArgoCD callback url with AppId
+
+1. Open the AppId console
+
+2. Select `Manage Authentication` from the left menu
+
+3. Select the `Authentication Settings` tab
+
+4. Add the `redirectURI` from above to the "Add web redirect URLs" section
